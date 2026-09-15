@@ -205,8 +205,7 @@ $$
 + \frac{\partial(\dot{\mathbf{x}}E')}{\partial \mathbf{x}}
 + \frac{\partial(\dot{k}E')}{\partial k}
 + \frac{\partial(\dot{\phi}E')}{\partial \phi}
-=
-\rho_w g \sum_{i=1}^{n} S_i.
+= \rho_w g \sum_{i=1}^{n} S_i.
 $$
 
 The geographic propagation velocity is
