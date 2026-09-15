@@ -398,10 +398,6 @@ The code approximates the water-side friction velocity from the air-side
 friction velocity and density ratio:
 
 $$
-u_{*w} = u_* \sqrt{\frac{\rho_a}{\rho_w}}.
-$$
-
-$$
 u_{\ast w}=
 u_{\ast}
 \sqrt{\frac{\rho_a}{\rho_w}}
