@@ -237,20 +237,7 @@ rates. This distinction is important.
 For prognostic bins, the source update uses
 
 $$
-E_s^{n+1}
-= E^n
-\exp\left[
-\Delta t
-\left(
-S_{in}^*
-- S_{ds}^*
-- S_{bottom}^*
-- S_{dt}^*
-- S_{dv}^*
-+ S_{ice}^*
-\right)
-\right]
-+ \Delta t\,S_{nl},
+E_s^{n+1}= E^n\exp\left[\Delta t\left(S_{in}^*- S_{ds}^*- S_{bottom}^*- S_{dt}^*- S_{dv}^*+ S_{ice}^*\right)\right]+ \Delta t\,S_{nl},
 $$
 
 where stars denote the implementation rate arrays that multiply $E$.
@@ -270,45 +257,26 @@ where $\psi$ is wind direction, and define the effective wind-wave
 relative speed
 
 $$
-\Delta U =
-U_{\lambda/2}\cos\theta
-- c
-- u\cos\phi
-- v\sin\phi.
+\Delta U =U_{\lambda/2}\cos\theta- c- u\cos\phi- v\sin\phi.
 $$
 
 The physical source is
 
 $$
-S_{in}
-=
-A_1
-\Delta U |\Delta U|
-\frac{k\omega}{g}
-\frac{\rho_a}{\rho_w}
-E(k,\phi).
+S_{in}=A_1\Delta U |\Delta U|\frac{k\omega}{g}\frac{\rho_a}{\rho_w}E(k,\phi).
 $$
 
 The corresponding implementation rate is
 
 $$
-S_{in}^*
-=
-A_1
-\Delta U |\Delta U|
-\frac{k\omega}{g}
-\frac{\rho_a}{\rho_w}.
+S_{in}^*=A_1\Delta U |\Delta U|\frac{k\omega}{g}\frac{\rho_a}{\rho_w}.
 $$
 
 The wind speed entering this term is evaluated at half wavelength above
 the surface:
 
 $$
-U_{\lambda/2}
-=
-U_z
-+ \frac{u_*}{\kappa}
-\log\left(\frac{\lambda/2}{z}\right),
+U_{\lambda/2}=U_z+ \frac{u_*}{\kappa}\log\left(\frac{\lambda/2}{z}\right),
 $$
 
 with $\kappa=0.4$, hence $1/\kappa=2.5$ in the code. In coupled `ESMF`
@@ -318,10 +286,7 @@ term.
 The sheltering coefficient depends on sea state:
 
 $$
-A_1 =
-\begin{cases}
-\text{variable}, & \Delta U > 0 \quad \text{wind sea},\\
-0.001, & 0 < U_{\lambda/2}\cos\theta < c+u\cos\phi+v\sin\phi \quad \text{swell with wind},\\
+A_1 =\begin{cases}\text{variable}, & \Delta U > 0 \quad \text{wind sea},\\0.001, & 0 < U_{\lambda/2}\cos\theta < c+u\cos\phi+v\sin\phi \quad \text{swell with wind},\\
 0.1, & \cos\theta < 0 \quad \text{swell against wind}.
 \end{cases}
 $$
@@ -374,9 +339,7 @@ $$
 The physical dissipation source is
 
 $$
-S_{ds}(k,\phi)
-=
--A_2
+S_{ds}(k,\phi)=-A_2
 \coth(0.2kd)
 \left(1 + A_3\overline{\chi^2}(k,\phi)\right)^2
 B^n(k,\phi)\,
@@ -386,9 +349,7 @@ $$
 The implementation stores the positive decay rate
 
 $$
-S_{ds}^*
-=
-A_2
+S_{ds}^*=A_2
 \coth(0.2kd)
 \left(1 + A_3\overline{\chi^2}\right)^2
 B^n
@@ -406,8 +367,7 @@ $$
 The longer-wave mean-square-slope contribution is computed directionally:
 
 $$
-\overline{\chi^2}_{o,p}
-=
+\overline{\chi^2}_{o,p}=
 \sum_{q<o}\sum_{p'}
 E_{q,p'}
 \cos^2(\phi_{p'}-\phi_p)
@@ -425,26 +385,20 @@ the source integrator and stress diagnostics.
 Ambient turbulence in the wave boundary layer attenuates waves:
 
 $$
-S_{dt}
-=
--A_4 u_{*w}kE(k,\phi).
+S_{dt}=-A_4 u_{*w}kE(k,\phi).
 $$
 
 The implementation stores the positive decay rate
 
 $$
-S_{dt}^*
-=
-A_4 u_{*w} k.
+S_{dt}^*=A_4 u_{*w} k.
 $$
 
 The code approximates the water-side friction velocity from the air-side
 friction velocity and density ratio:
 
 $$
-u_{*w}
-=
-u_*\sqrt{\frac{\rho_a}{\rho_w}}.
+u_{*w}=u_*\sqrt{\frac{\rho_a}{\rho_w}}.
 $$
 
 Default:
@@ -458,17 +412,13 @@ $$
 Viscous dissipation converts wave energy to heat:
 
 $$
-S_{dv}
-=
--4\nu k^2 E(k,\phi).
+S_{dv}=-4\nu k^2 E(k,\phi).
 $$
 
 The implementation stores
 
 $$
-S_{dv}^*
-=
-4\nu k^2,
+S_{dv}^*=4\nu k^2,
 $$
 
 where $\nu$ is `nu_water`. This term is usually important only for the
@@ -479,26 +429,18 @@ shortest waves in clean water.
 The manual separates bottom friction and bottom percolation:
 
 $$
-S_{bf}
-=
--G_f\frac{k}{\sinh(2kd)}E(k,\phi),
+S_{bf}=-G_f\frac{k}{\sinh(2kd)}E(k,\phi),
 $$
 
 $$
-S_{bp}
-=
--G_p\frac{k}{\cosh^2(kd)}E(k,\phi).
+S_{bp}=-G_p\frac{k}{\cosh^2(kd)}E(k,\phi).
 $$
 
 The implementation combines both into the positive decay-rate array
 `sbf`:
 
 $$
-S_{bottom}^*
-=
-G_f\frac{k}{\sinh(2kd)}
-+
-G_p\frac{k}{\cosh^2(kd)}.
+S_{bottom}^*=G_f\frac{k}{\sinh(2kd)}+G_p\frac{k}{\cosh^2(kd)}.
 $$
 
 Typical coefficient ranges are:
@@ -519,14 +461,7 @@ proportional to spilling dissipation into the next two lower-wavenumber
 bins. The manual form is
 
 $$
-S_{nl}(k,\phi)
-=
-A_5
-\left[
-b_1 S_{sb}(k-\Delta k,\phi)
-+ b_2 S_{sb}(k-2\Delta k,\phi)
-- S_{sb}(k,\phi)
-\right],
+S_{nl}(k,\phi)=A_5\left[b_1 S_{sb}(k-\Delta k,\phi)+ b_2 S_{sb}(k-2\Delta k,\phi)- S_{sb}(k,\phi)\right],
 $$
 
 where
@@ -549,27 +484,13 @@ In the discrete implementation, bin $o$ receives transfer from bins
 $o+1$ and $o+2$ and loses energy to lower-wavenumber bins:
 
 $$
-S_{nl,o,p}
-=
-\beta_{1,o} S_{ds,o+1,p}^*E_{o+1,p}
-+
-\beta_{2,o} S_{ds,o+2,p}^*E_{o+2,p}
--
-A_5 S_{ds,o,p}^*E_{o,p}.
+S_{nl,o,p}=\beta_{1,o} S_{ds,o+1,p}^*E_{o+1,p}+\beta_{2,o} S_{ds,o+2,p}^*E_{o+2,p}-A_5 S_{ds,o,p}^*E_{o,p}.
 $$
 
 The implementation factors are
 
 $$
-\beta_{1,o}
-=
-A_5 b_1
-\frac{(k\,dk)_{o+1}}{(k\,dk)_o},
-\qquad
-\beta_{2,o}
-=
-A_5 b_2
-\frac{(k\,dk)_{o+2}}{(k\,dk)_o}.
+\beta_{1,o}=A_5 b_1\frac{(k\,dk)_{o+1}}{(k\,dk)_o},\qquad\beta_{2,o}=A_5 b_2\frac{(k\,dk)_{o+2}}{(k\,dk)_o}.
 $$
 
 `snl_fac` is the implementation coefficient $A_5$; the default is `5.0`.
@@ -624,28 +545,19 @@ cell. The default thresholds are `fice_lth = 0.30` and
 The local source contribution is split from propagation and refraction:
 
 $$
-\frac{\partial E}{\partial t}
-=
-\left(\frac{\partial E}{\partial t}\right)_s
-+
-\left(\frac{\partial E}{\partial t}\right)_a.
+\frac{\partial E}{\partial t}=\left(\frac{\partial E}{\partial t}\right)_s+\left(\frac{\partial E}{\partial t}\right)_a.
 $$
 
 For source rates that multiply $E$,
 
 $$
-\left(\frac{\partial E}{\partial t}\right)_s
-=
-\sum_i S_i^*E.
+\left(\frac{\partial E}{\partial t}\right)_s=\sum_i S_i^*E.
 $$
 
 The exponential source solution is
 
 $$
-E_s^{n+1}
-=
-E^n
-\exp\left(\sum_i S_i^*\Delta t\right).
+E_s^{n+1}=E^n\exp\left(\sum_i S_i^*\Delta t\right).
 $$
 
 The timestep is limited so the exponential factor remains bounded:
@@ -658,23 +570,14 @@ In code, `explim` is the logarithmic exponent limit and the diagnostic
 physics timestep is
 
 $$
-\Delta t_{phys}(i)
-=
-\frac{\texttt{explim}}
+\Delta t_{phys}(i)=\frac{\texttt{explim}}
 {\max_{o,p}|\Lambda_{o,p,i}|},
 $$
 
 where the estimated local rate is
 
 $$
-\Lambda
-=
-S_{in}^*
-- S_{ds}^*
-- S_{bottom}^*
-- S_{dt}^*
-- S_{dv}^*
-+ S_{ice}^*.
+\Lambda=S_{in}^*- S_{ds}^*- S_{bottom}^*- S_{dt}^*- S_{dv}^*+ S_{ice}^*.
 $$
 
 The actual source timestep is
@@ -723,9 +626,7 @@ from the balance of wind input, turbulence, viscosity, sea ice, and
 breaking:
 
 $$
-E_{eq}
-=
-k^{-4}
+E_{eq}=k^{-4}
 \left[
 \frac{
 S_{in}^* - S_{dt}^* - S_{dv}^* + S_{ice}^*
@@ -751,11 +652,7 @@ for propagation and refraction.
 The advection equation in Cartesian projection is
 
 $$
-\frac{\partial E}{\partial t}
-=
--\frac{\partial[(c_g\cos\phi+u)E]}{\partial x}
--\frac{\partial[(c_g\sin\phi+v)E]}{\partial y}
--\frac{\partial(\dot{\phi}E)}{\partial \phi}.
+\frac{\partial E}{\partial t}=-\frac{\partial[(c_g\cos\phi+u)E]}{\partial x}-\frac{\partial[(c_g\sin\phi+v)E]}{\partial y}-\frac{\partial(\dot{\phi}E)}{\partial \phi}.
 $$
 
 Geographic propagation uses first-order upstream differencing. For one
@@ -770,27 +667,17 @@ $$
 with
 
 $$
-\Phi_{i+1/2}
-=
-\frac{\dot{x}_{i+1/2}+|\dot{x}_{i+1/2}|}{2}E_i
-+
-\frac{\dot{x}_{i+1/2}-|\dot{x}_{i+1/2}|}{2}E_{i+1},
+\Phi_{i+1/2}=\frac{\dot{x}_{i+1/2}+|\dot{x}_{i+1/2}|}{2}E_i+\frac{\dot{x}_{i+1/2}-|\dot{x}_{i+1/2}|}{2}E_{i+1},
 $$
 
 $$
-\Phi_{i-1/2}
-=
-\frac{\dot{x}_{i-1/2}+|\dot{x}_{i-1/2}|}{2}E_{i-1}
-+
-\frac{\dot{x}_{i-1/2}-|\dot{x}_{i-1/2}|}{2}E_i,
+\Phi_{i-1/2}=\frac{\dot{x}_{i-1/2}+|\dot{x}_{i-1/2}|}{2}E_{i-1}+\frac{\dot{x}_{i-1/2}-|\dot{x}_{i-1/2}|}{2}E_i,
 $$
 
 and
 
 $$
-\dot{x}_{i\pm1/2}
-=
-\frac{\dot{x}_i+\dot{x}_{i\pm1}}{2}.
+\dot{x}_{i\pm1/2}=\frac{\dot{x}_i+\dot{x}_{i\pm1}}{2}.
 $$
 
 The implementation applies this form over east, west, north, and south
@@ -806,11 +693,8 @@ east-west boundary conditions.
 The directional rotation rate is
 
 $$
-\dot{\phi}
-=
-\frac{\partial(c\sin\phi+v)}{\partial x}
--
-\frac{\partial(c\cos\phi+u)}{\partial y}.
+\dot{\phi}=\frac{\partial(c\sin\phi+v)}{\partial x}
+-\frac{\partial(c\cos\phi+u)}{\partial y}.
 $$
 
 Positive $\dot{\phi}$ rotates wave energy counter-clockwise; negative
@@ -841,8 +725,7 @@ $$
 The resolved wind form stress is computed from the wind-input source:
 
 $$
-\tau_x
-=
+\tau_x=
 \rho_w g
 \int_{-\pi}^{\pi}
 \int_{k_{\min}}^{k_{\max}}
@@ -851,8 +734,7 @@ $$
 $$
 
 $$
-\tau_y
-=
+\tau_y=
 \rho_w g
 \int_{-\pi}^{\pi}
 \int_{k_{\min}}^{k_{\max}}
@@ -863,19 +745,14 @@ $$
 The form drag coefficient is
 
 $$
-C_{d,f}
-=
+C_{d,f}=
 \frac{\sqrt{\tau_x^2+\tau_y^2}}{\rho_a U_z^2}.
 $$
 
 The smooth-flow skin drag coefficient is computed from
 
 $$
-C_{d,s}
-=
-\frac{u_*^2}{U^2(z)}
-=
-\frac{\kappa^2}{\left[\log(z/z_0)\right]^2},
+C_{d,s}=\frac{u_*^2}{U^2(z)}=\frac{\kappa^2}{\left[\log(z/z_0)\right]^2},
 $$
 
 with molecular-sub-layer roughness
@@ -888,17 +765,13 @@ The implementation solves this relation by six fixed-point iterations.
 It uses wind relative to the moving surface:
 
 $$
-\mathbf{U}_{rel}
-=
-\mathbf{U}_{wind}
-- \left(\mathbf{u}_{current}+\mathbf{u}_{Stokes}(z=0)\right).
+\mathbf{U}_{rel}=\mathbf{U}_{wind}- \left(\mathbf{u}_{current}+\mathbf{u}_{Stokes}(z=0)\right).
 $$
 
 The skin drag is reduced by wave sheltering:
 
 $$
-C_{d,s}^{new}
-=
+C_{d,s}^{new}=
 \frac{C_{d,s}^{old}}{3}
 \left(
 1 + 2\frac{C_{d,s}^{old}}{C_{d,s}^{old}+C_{d,f}}
@@ -910,23 +783,13 @@ and capped at $10^{-2}$.
 The total atmospheric stress and drag coefficient are
 
 $$
-\boldsymbol{\tau}
-=
-\boldsymbol{\tau}_{form}
-+
-\boldsymbol{\tau}_{skin},
-\qquad
-C_d
-=
-\frac{|\boldsymbol{\tau}|}{\rho_a U_z^2}.
+\boldsymbol{\tau}=\boldsymbol{\tau}_{form}+\boldsymbol{\tau}_{skin},\qquadC_d=\frac{|\boldsymbol{\tau}|}{\rho_a U_z^2}.
 $$
 
 The air-side friction velocity is updated from the total stress:
 
 $$
-u_*
-=
-\sqrt{\frac{|\boldsymbol{\tau}|}{\rho_a}}.
+u_*=\sqrt{\frac{|\boldsymbol{\tau}|}{\rho_a}}.
 $$
 
 ### High-Frequency Stress Tail
@@ -949,9 +812,7 @@ $$
 The tail factor is
 
 $$
-T
-=
-\frac{k_{cap}^{p+1}-k_{max}^{p+1}}
+T=\frac{k_{cap}^{p+1}-k_{max}^{p+1}}
 {k_{max}^{p}(p+1)},
 \qquad
 k_{cap}=10^3\,\mathrm{m^{-1}}.
@@ -967,44 +828,21 @@ flux receives dissipation by breaking, turbulence, and viscosity, plus
 tail and skin stress:
 
 $$
-\tau_x^{OT}
-=
-\rho_w g
-\int_{-\pi}^{\pi}
-\int_{k_{\min}}^{k_{\max}}
-\frac{-S_{ds}-S_{dt}-S_{dv}}{c}
-\cos\phi\,k\,dk\,d\phi
-+ \tau_x(tail)
-+ \tau_x(skin),
+\tau_x^{OT}=\rho_w g\int_{-\pi}^{\pi}\int_{k_{\min}}^{k_{\max}}\frac{-S_{ds}-S_{dt}-S_{dv}}{c}\cos\phi\,k\,dk\,d\phi+ \tau_x(tail)+ \tau_x(skin),
 $$
 
 $$
-\tau_y^{OT}
-=
-\rho_w g
-\int_{-\pi}^{\pi}
-\int_{k_{\min}}^{k_{\max}}
-\frac{-S_{ds}-S_{dt}-S_{dv}}{c}
-\sin\phi\,k\,dk\,d\phi
-+ \tau_y(tail)
-+ \tau_y(skin).
+\tau_y^{OT}=\rho_w g\int_{-\pi}^{\pi}\int_{k_{\min}}^{k_{\max}}\frac{-S_{ds}-S_{dt}-S_{dv}}{c}\sin\phi\,k\,dk\,d\phi+ \tau_y(tail)+ \tau_y(skin).
 $$
 
 Ocean-bottom flux receives bottom friction and bottom percolation:
 
 $$
-\tau_x^{OB}
-=
-\rho_w g
-\int_{-\pi}^{\pi}
-\int_{k_{\min}}^{k_{\max}}
-\frac{-S_{bf}-S_{bp}}{c}
-\cos\phi\,k\,dk\,d\phi,
+\tau_x^{OB}=\rho_w g\int_{-\pi}^{\pi}\int_{k_{\min}}^{k_{\max}}\frac{-S_{bf}-S_{bp}}{c}\cos\phi\,k\,dk\,d\phi,
 $$
 
 $$
-\tau_y^{OB}
-=
+\tau_y^{OB}=
 \rho_w g
 \int_{-\pi}^{\pi}
 \int_{k_{\min}}^{k_{\max}}
@@ -1029,8 +867,7 @@ as $z_l \le 0$, with $z=0$ at the surface and $z=-d$ at the bottom.
 For each requested level, UMWM computes
 
 $$
-\mathbf{u}_S(z_l)
-=
+\mathbf{u}_S(z_l)=
 \sum_{o,p}
 K_{o,l}
 E_{o,p}
@@ -1043,8 +880,7 @@ $$
 where, for finite depth,
 
 $$
-K_{o,l}
-=
+K_{o,l}=
 \omega_o k_o^2
 \frac{\cosh\left[2k_o(z_l+d)\right]}{\sinh^2(k_od)}
 dk_o\,d\phi.
@@ -1054,8 +890,7 @@ For large arguments that would overflow hyperbolic functions, the code
 uses the deep-water approximation
 
 $$
-K_{o,l}
-=
+K_{o,l}=
 2\omega_o k_o^2
 \exp(2k_o z_l)
 dk_o\,d\phi.
@@ -1079,8 +914,7 @@ noted otherwise.
 Significant wave height:
 
 $$
-H_s
-=
+H_s=
 4\sqrt{
 \int\!\int E(k,\phi)k\,dk\,d\phi
 }.
@@ -1089,8 +923,7 @@ $$
 Discrete implementation:
 
 $$
-H_s
-=
+H_s=
 4\sqrt{
 \sum_{o,p}E_{o,p} k_o\,dk_o\,d\phi
 }.
@@ -1099,8 +932,7 @@ $$
 Mean wave period:
 
 $$
-\overline{T}
-=
+\overline{T}=
 \sqrt{
 \frac{
 \int\!\int E(k,\phi)k\,dk\,d\phi
@@ -1113,8 +945,7 @@ $$
 Mean wavelength:
 
 $$
-\overline{L}
-=
+\overline{L}=
 2\pi
 \sqrt{
 \frac{
@@ -1128,8 +959,7 @@ $$
 Mean wave direction:
 
 $$
-\overline{\phi}
-=
+\overline{\phi}=
 \operatorname{atan2}
 \left(
 \sum_p M_p\sin\phi_p,
@@ -1160,8 +990,7 @@ $$
 The wave momentum diagnostics are integrated over the prognostic range:
 
 $$
-M_x
-=
+M_x=
 \rho_w g
 \sum_{o\le oc,p}
 E_{o,p}
@@ -1170,8 +999,7 @@ E_{o,p}
 $$
 
 $$
-M_y
-=
+M_y=
 \rho_w g
 \sum_{o\le oc,p}
 E_{o,p}
@@ -1182,8 +1010,7 @@ $$
 The radiation-like momentum flux components are
 
 $$
-C_{g}M_{xx}
-=
+C_{g}M_{xx}=
 \rho_w g
 \sum_{o\le oc,p}
 c_{g,o}E_{o,p}
@@ -1192,8 +1019,7 @@ c_{g,o}E_{o,p}
 $$
 
 $$
-C_{g}M_{xy}
-=
+C_{g}M_{xy}=
 \rho_w g
 \sum_{o\le oc,p}
 c_{g,o}E_{o,p}
@@ -1202,8 +1028,7 @@ c_{g,o}E_{o,p}
 $$
 
 $$
-C_{g}M_{yy}
-=
+C_{g}M_{yy}=
 \rho_w g
 \sum_{o\le oc,p}
 c_{g,o}E_{o,p}
