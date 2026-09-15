@@ -237,7 +237,7 @@ rates. This distinction is important.
 For prognostic bins, the source update uses
 
 $$
-E_s^{n+1}= E^n\exp\left[\Delta t\left(S_{in}^*- S_{ds}^*- S_{bottom}^*- S_{dt}^*- S_{dv}^*+ S_{ice}^*\right)\right]+ \Delta t\,S_{nl},
+E_s^{n+1}= E^n\exp\left[\Delta t\left(S_{in}^* - S_{ds}^* - S_{bottom}^* - S_{dt}^* - S_{dv}^* + S_{ice}^* \right)\right]+ \Delta t\,S_{nl},
 $$
 
 where stars denote the implementation rate arrays that multiply $E$.
@@ -398,7 +398,7 @@ The code approximates the water-side friction velocity from the air-side
 friction velocity and density ratio:
 
 $$
-u_{*w}=u_*\sqrt{\frac{\rho_a}{\rho_w}}.
+u_{*w} = u_* \sqrt{\frac{\rho_a}{\rho_w}}.
 $$
 
 Default:
@@ -783,7 +783,7 @@ and capped at $10^{-2}$.
 The total atmospheric stress and drag coefficient are
 
 $$
-\boldsymbol{\tau}=\boldsymbol{\tau}_{form}+\boldsymbol{\tau}_{skin},\qquadC_d=\frac{|\boldsymbol{\tau}|}{\rho_a U_z^2}.
+\boldsymbol{\tau}=\boldsymbol{\tau}_{form}+\boldsymbol{\tau}_{skin},\qquad C_d=\frac{|\boldsymbol{\tau}|}{\rho_a U_z^2}.
 $$
 
 The air-side friction velocity is updated from the total stress:
@@ -965,6 +965,15 @@ $$
 \sum_p M_p\sin\phi_p,
 \sum_p M_p\cos\phi_p
 \right),
+$$
+
+$$
+\overline{\phi}=
+\mathrm{atan2}
+\left(
+\sum_p M_p \sin\phi_p,
+\sum_p M_p \cos\phi_p
+\right)
 $$
 
 where
