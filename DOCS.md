@@ -401,6 +401,12 @@ $$
 u_{*w} = u_* \sqrt{\frac{\rho_a}{\rho_w}}.
 $$
 
+$$
+u_{\ast w}=
+u_{\ast}
+\sqrt{\frac{\rho_a}{\rho_w}}
+$$
+
 Default:
 
 $$
@@ -957,15 +963,6 @@ $$
 $$
 
 Mean wave direction:
-
-$$
-\overline{\phi}=
-\operatorname{atan2}
-\left(
-\sum_p M_p\sin\phi_p,
-\sum_p M_p\cos\phi_p
-\right),
-$$
 
 $$
 \overline{\phi}=
