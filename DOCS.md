@@ -577,7 +577,7 @@ $$
 where the estimated local rate is
 
 $$
-\Lambda=S_{in}^*- S_{ds}^*- S_{bottom}^*- S_{dt}^*- S_{dv}^*+ S_{ice}^*.
+\Lambda=S_{in}^* - S_{ds}^* - S_{bottom}^* - S_{dt}^* - S_{dv}^* + S_{ice}^* .
 $$
 
 The actual source timestep is
