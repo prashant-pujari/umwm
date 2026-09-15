@@ -154,12 +154,7 @@ c = \frac{\omega}{k},
 $$
 
 $$
-c_g =
-c\left[
-\frac{1}{2}
-+ \frac{\min(kd,20)}{\sinh(2\min(kd,20))}
-+ \frac{\sigma k^2}{\rho_w g + \sigma k^2}
-\right].
+c_g = c\left[\frac{1}{2}+ \frac{\min(kd,20)}{\sinh(2\min(kd,20))}+ \frac{\sigma k^2}{\rho_w g + \sigma k^2}\right].
 $$
 
 The `min(kd,20)` cap is the implementation limit used in
