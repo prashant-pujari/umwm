@@ -238,8 +238,7 @@ For prognostic bins, the source update uses
 
 $$
 E_s^{n+1}
-=
-E^n
+= E^n
 \exp\left[
 \Delta t
 \left(
